@@ -5,4 +5,5 @@ export interface CreateUserDto{
     phone: string;
     cpf: string;
     password: string;
+    typeUser: number;
 }
