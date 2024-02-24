@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { UserEntity } from './entities/user.entity';
 import { CreateUserDto } from './dtos/createUser.dto';
 import { hash } from 'bcrypt';
@@ -12,7 +12,7 @@ export class UserService {
     constructor(
         @InjectRepository(UserEntity)
         private readonly userRepository: Repository<UserEntity>,
-    ) {}
+    ) { }
 
     async createUser(createUserDto: CreateUserDto): Promise<UserEntity> {
 
@@ -28,6 +28,19 @@ export class UserService {
 
     async getAllUser(): Promise<UserEntity[]> {
         return this.userRepository.find();
+    }
+
+    async findUserById(userId: number): Promise<UserEntity> {
+        const user = await this.userRepository.findOne({
+            where:
+                { id: userId }
+        });
+
+        if (!user) {
+            throw new NotFoundException('User not found');
+        }
+
+        return user
     }
 
 }
